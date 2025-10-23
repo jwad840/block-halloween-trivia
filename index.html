@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎃 Block Halloween Movie Trivia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 50%, #1a1a1a 100%);
+            color: #ff6b35;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid #ff6b35;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.3);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #ff6b35;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+        
+        .subtitle {
+            color: #ffa366;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        
+        .question-container {
+            background: rgba(255, 107, 53, 0.1);
+            border: 2px solid #ff6b35;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .question {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #fff;
+            line-height: 1.4;
+        }
+        
+        .options {
+            display: grid;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .option {
+            background: #2d1810;
+            border: 2px solid #ff6b35;
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+        }
+        
+        .option:hover {
+            background: #ff6b35;
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+        }
+        
+        .option.selected {
+            background: #ff6b35;
+            color: #000;
+        }
+        
+        .option.correct {
+            background: #4CAF50 !important;
+            border-color: #4CAF50;
+        }
+        
+        .option.incorrect {
+            background: #f44336 !important;
+            border-color: #f44336;
+        }
+        
+        .btn {
+            background: #ff6b35;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .btn:hover {
+            background: #ffa366;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress {
+            background: #333;
+            border-radius: 10px;
+            height: 20px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #ff6b35, #ffa366);
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .score {
+            font-size: 2em;
+            color: #ff6b35;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+        
+        .input-field {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px;
+            font-size: 1.1em;
+            border: 2px solid #ff6b35;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            margin: 15px 0;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+        }
+        
+        .admin-link {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 107, 53, 0.8);
+            color: #000;
+            text-decoration: none;
+            font-size: 0.9em;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            z-index: 1000;
+        }
+        
+        .admin-link:hover {
+            background: #ff6b35;
+            transform: scale(1.05);
+        }
+        
+        .admin-panel {
+            text-align: left;
+        }
+        
+        .participant-list {
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid #ff6b35;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .participant-item {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #666;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .admin-notice {
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid #ff6b35;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .question {
+                font-size: 1.1em;
+            }
+            
+            .admin-link {
+                bottom: 10px;
+                right: 10px;
+                font-size: 0.8em;
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen">
+            <h1>🎃 Halloween Movie Trivia 🎃</h1>
+            <p class="subtitle">Block Employee Edition</p>
+            <p style="color: #ffa366; margin: 20px 0;">Test your knowledge of Halloween and horror movie classics!</p>
+            
+            <input type="text" id="name" class="input-field" placeholder="Enter your full name" required>
+            <input type="email" id="email" class="input-field" placeholder="Enter your Block email address" required>
+            
+            <br>
+            <button class="btn" onclick="startGame()">Start Trivia 👻</button>
+            
+            <div class="admin-notice">
+                <p style="color: #ffa366; font-size: 0.9em;">
+                    🔐 Administrators: Click the "Admin Access" button in the bottom right corner to view participant data and export results.
+                </p>
+            </div>
+        </div>
+        
+        <!-- Game Screen -->
+        <div id="game-screen" class="hidden">
+            <div class="progress">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <p id="question-counter" style="color: #ffa366; margin-bottom: 20px;"></p>
+            
+            <div class="question-container">
+                <div class="question" id="question-text"></div>
+                <div class="options" id="options-container"></div>
+            </div>
+            
+            <button class="btn" id="next-btn" onclick="nextQuestion()" disabled>Next Question ➡️</button>
+        </div>
+        
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden">
+            <h1>🎃 Trivia Complete! 🎃</h1>
+            <div class="score" id="final-score"></div>
+            <p id="performance-message" style="color: #ffa366; font-size: 1.2em; margin: 20px 0;"></p>
+            <p style="color: #ccc; margin: 20px 0;">Thank you for participating! Your answers have been recorded for prize consideration.</p>
+            <button class="btn" onclick="restartGame()">Play Again 🔄</button>
+        </div>
+        
+        <!-- Admin Login Screen -->
+        <div id="admin-login" class="hidden">
+            <h1>🔐 Admin Access</h1>
+            <p style="color: #ffa366; margin: 20px 0;">Enter the admin password to view participant data and export results.</p>
+            <input type="password" id="admin-password" class="input-field" placeholder="Enter admin password">
+            <br>
+            <button class="btn" onclick="adminLogin()">Login</button>
+            <button class="btn" onclick="backToGame()">Back to Game</button>
+        </div>
+        
+        <!-- Admin Panel -->
+        <div id="admin-panel" class="hidden admin-panel">
+            <h1>📊 Admin Dashboard</h1>
+            <p style="color: #ffa366; margin: 20px 0;">Manage participant data and export results for prize administration.</p>
+            
+            <div style="margin: 20px 0;">
+                <button class="btn" onclick="exportCSV()">📥 Export CSV</button>
+                <button class="btn" onclick="clearData()" style="background: #f44336;">🗑️ Clear All Data</button>
+                <button class="btn" onclick="backToGame()">🏠 Back to Game</button>
+            </div>
+            
+            <h2 style="color: #ff6b35; margin: 20px 0;">Participants (<span id="participant-count">0</span>)</h2>
+            <div id="participants-list" class="participant-list"></div>
+        </div>
+    </div>
+    
+    <a href="#" class="admin-link" onclick="showAdminLogin(); return false;">🔐 Admin Access</a>
+
+    <script>
+        const questions = [
+            {
+                question: "In the 1978 film 'Halloween,' what is the name of the masked killer?",
+                options: ["Jason Voorhees", "Michael Myers", "Freddy Krueger", "Ghostface"],
+                correct: 1
+            },
+            {
+                question: "What hotel serves as the setting for Stephen King's 'The Shining'?",
+                options: ["The Stanley Hotel", "The Bates Motel", "The Overlook Hotel", "The Grand Budapest Hotel"],
+                correct: 2
+            },
+            {
+                question: "In 'Scream' (1996), what question does Ghostface typically ask his victims?",
+                options: ["Do you like scary movies?", "What's your favorite color?", "Are you alone?", "What's behind you?"],
+                correct: 0
+            },
+            {
+                question: "Which actress played Laurie Strode in the original 'Halloween' (1978)?",
+                options: ["Sigourney Weaver", "Janet Leigh", "Jamie Lee Curtis", "Neve Campbell"],
+                correct: 2
+            },
+            {
+                question: "In 'A Nightmare on Elm Street,' on what street do the main characters live?",
+                options: ["Maple Street", "Elm Street", "Oak Street", "Pine Street"],
+                correct: 1
+            },
+            {
+                question: "In 'Beetlejuice' (1988), how many times must you say Beetlejuice's name to summon him?",
+                options: ["Two times", "Three times", "Five times", "Seven times"],
+                correct: 1
+            },
+            {
+                question: "In 'Get Out' (2017), what triggers the hypnotic state called 'The Sunken Place'?",
+                options: ["A silver spoon", "A tea cup", "A pocket watch", "A camera flash"],
+                correct: 1
+            },
+            {
+                question: "Which horror movie features the line 'Here's Johnny!'?",
+                options: ["Psycho", "The Exorcist", "The Shining", "Poltergeist"],
+                correct: 2
+            },
+            {
+                question: "In 'The Ring' (2002), how many days do you have to live after watching the cursed videotape?",
+                options: ["Three days", "Five days", "Seven days", "Ten days"],
+                correct: 2
+            },
+            {
+                question: "In 'Poltergeist' (1982), what phrase does Carol Anne say when she's pulled into the TV?",
+                options: ["Help me!", "They're here!", "I'm scared!", "Don't leave me!"],
+                correct: 1
+            },
+            {
+                question: "In 'Young Frankenstein' (1974), who plays Dr. Frederick Frankenstein?",
+                options: ["Mel Brooks", "Gene Wilder", "Marty Feldman", "Peter Boyle"],
+                correct: 1
+            },
+            {
+                question: "In 'Hereditary' (2018), what miniature hobby does the mother Annie practice?",
+                options: ["Model trains", "Dollhouse making", "Ship building", "Diorama creation"],
+                correct: 1
+            },
+            {
+                question: "In 'Ghostbusters' (1984), what is the name of the marshmallow mascot that terrorizes New York?",
+                options: ["Stay Puft Marshmallow Man", "Marshmallow Monster", "The White Giant", "Puffy the Destroyer"],
+                correct: 0
+            },
+            {
+                question: "In 'The Addams Family' (1991), what is the name of the disembodied hand character?",
+                options: ["Fingers", "Thing", "Hand", "Grabby"],
+                correct: 1
+            },
+            {
+                question: "In 'The Exorcist' (1973), what is the name of the possessed girl?",
+                options: ["Carrie", "Regan", "Rosemary", "Damien"],
+                correct: 1
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let playerName = '';
+        let playerEmail = '';
+        let selectedAnswer = null;
+        let gameStartTime = null;
+        let playerAnswers = [];
+
+        function startGame() {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            
+            if (!name) {
+                alert('Please enter your full name');
+                return;
+            }
+            
+            if (!email || !email.includes('@')) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            playerName = name;
+            playerEmail = email;
+            gameStartTime = new Date();
+            playerAnswers = [];
+            
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('question-text').textContent = question.question;
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            updateProgress();
+            selectedAnswer = null;
+            document.getElementById('next-btn').disabled = true;
+        }
+
+        function selectAnswer(index) {
+            selectedAnswer = index;
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[index].classList.add('selected');
+            document.getElementById('next-btn').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (selectedAnswer === null) return;
+            
+            const question = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            
+            // Record the answer
+            playerAnswers.push({
+                questionIndex: currentQuestion,
+                question: question.question,
+                selectedAnswer: selectedAnswer,
+                selectedText: question.options[selectedAnswer],
+                correctAnswer: question.correct,
+                correctText: question.options[question.correct],
+                isCorrect: selectedAnswer === question.correct
+            });
+            
+            // Show correct answer
+            options.forEach((opt, index) => {
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === selectedAnswer && index !== question.correct) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            if (selectedAnswer === question.correct) {
+                score++;
+            }
+            
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    showQuestion();
+                } else {
+                    showResults();
+                }
+            }, 2000);
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+        }
+
+        function showResults() {
+            const gameEndTime = new Date();
+            const completionTime = Math.round((gameEndTime - gameStartTime) / 1000);
+            
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('hidden');
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('final-score').textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            let message = '';
+            if (percentage >= 90) {
+                message = "🏆 Horror Movie Master! You know your scary films!";
+            } else if (percentage >= 70) {
+                message = "👻 Great job! You're a true horror fan!";
+            } else if (percentage >= 50) {
+                message = "🎃 Not bad! Time to watch more Halloween classics!";
+            } else {
+                message = "💀 Better luck next time! More movie nights needed!";
+            }
+            
+            document.getElementById('performance-message').textContent = message;
+            
+            // Save participant data
+            saveParticipantData(percentage, completionTime, gameEndTime);
+        }
+
+        function saveParticipantData(percentage, completionTime, timestamp) {
+            const participantData = {
+                name: playerName,
+                email: playerEmail,
+                score: score,
+                totalQuestions: questions.length,
+                percentage: percentage,
+                completionTime: completionTime,
+                timestamp: timestamp.toISOString(),
+                answers: playerAnswers
+            };
+            
+            // Get existing data
+            let participants = JSON.parse(localStorage.getItem('triviaParticipants') || '[]');
+            
+            // Add new participant
+            participants.push(participantData);
+            
+            // Save back to localStorage
+            localStorage.setItem('triviaParticipants', JSON.stringify(participants));
+        }
+
+        function restartGame() {
+            currentQuestion = 0;
+            score = 0;
+            selectedAnswer = null;
+            playerAnswers = [];
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            document.getElementById('name').value = '';
+            document.getElementById('email').value = '';
+        }
+
+        function showAdminLogin() {
+            hideAllScreens();
+            document.getElementById('admin-login').classList.remove('hidden');
+        }
+
+        function adminLogin() {
+            const password = document.getElementById('admin-password').value;
+            if (password === 'HalloweenTrivia2024!') {
+                hideAllScreens();
+                document.getElementById('admin-panel').classList.remove('hidden');
+                loadParticipants();
+            } else {
+                alert('Incorrect password');
+            }
+        }
+
+        function loadParticipants() {
+            const participants = JSON.parse(localStorage.getItem('triviaParticipants') || '[]');
+            const participantsList = document.getElementById('participants-list');
+            const participantCount = document.getElementById('participant-count');
+            
+            participantCount.textContent = participants.length;
+            
+            if (participants.length === 0) {
+                participantsList.innerHTML = '<p style="color: #666;">No participants yet. Participant data will appear here after employees complete the trivia game.</p>';
+                return;
+            }
+            
+            participantsList.innerHTML = '';
+            
+            participants.forEach((participant, index) => {
+                const participantDiv = document.createElement('div');
+                participantDiv.className = 'participant-item';
+                
+                const completionDate = new Date(participant.timestamp).toLocaleString();
+                
+                participantDiv.innerHTML = `
+                    <h3 style="color: #ff6b35;">${participant.name}</h3>
+                    <p><strong>Email:</strong> ${participant.email}</p>
+                    <p><strong>Score:</strong> ${participant.score}/${participant.totalQuestions} (${participant.percentage}%)</p>
+                    <p><strong>Completion Time:</strong> ${participant.completionTime} seconds</p>
+                    <p><strong>Submitted:</strong> ${completionDate}</p>
+                    <details style="margin-top: 10px;">
+                        <summary style="cursor: pointer; color: #ffa366;">View Detailed Answers</summary>
+                        <div style="margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 5px;">
+                            ${participant.answers.map((answer, i) => `
+                                <p style="margin: 5px 0; ${answer.isCorrect ? 'color: #4CAF50' : 'color: #f44336'}">
+                                    <strong>Q${i+1}:</strong> ${answer.selectedText} ${answer.isCorrect ? '✓' : '✗'}
+                                    ${!answer.isCorrect ? `<br><small style="color: #ffa366;">Correct: ${answer.correctText}</small>` : ''}
+                                </p>
+                            `).join('')}
+                        </div>
+                    </details>
+                `;
+                
+                participantsList.appendChild(participantDiv);
+            });
+        }
+
+        function exportCSV() {
+            const participants = JSON.parse(localStorage.getItem('triviaParticipants') || '[]');
+            
+            if (participants.length === 0) {
+                alert('No participant data to export. Data will be available after employees complete the trivia game.');
+                return;
+            }
+            
+            // Create CSV headers
+            let csvContent = 'Name,Email,Score,Total Questions,Percentage,Completion Time (seconds),Submission Date';
+            
+            // Add question headers
+            for (let i = 0; i < questions.length; i++) {
+                csvContent += `,Q${i+1} Answer,Q${i+1} Correct`;
+            }
+            csvContent += '\n';
+            
+            // Add participant data
+            participants.forEach(participant => {
+                const submissionDate = new Date(participant.timestamp).toLocaleString();
+                let row = `"${participant.name}","${participant.email}",${participant.score},${participant.totalQuestions},${participant.percentage},${participant.completionTime},"${submissionDate}"`;
+                
+                // Add answers for each question
+                for (let i = 0; i < questions.length; i++) {
+                    const answer = participant.answers.find(a => a.questionIndex === i);
+                    if (answer) {
+                        row += `,"${answer.selectedText}",${answer.isCorrect ? 'Yes' : 'No'}`;
+                    } else {
+                        row += ',"No Answer","No"';
+                    }
+                }
+                
+                csvContent += row + '\n';
+            });
+            
+            // Download CSV
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `halloween_trivia_results_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            alert('CSV file downloaded successfully! Check your Downloads folder.');
+        }
+
+        function clearData() {
+            if (confirm('Are you sure you want to clear all participant data? This cannot be undone.')) {
+                localStorage.removeItem('triviaParticipants');
+                loadParticipants();
+                alert('All participant data has been cleared.');
+            }
+        }
+
+        function backToGame() {
+            hideAllScreens();
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            document.getElementById('admin-password').value = '';
+        }
+
+        function hideAllScreens() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('admin-login').classList.add('hidden');
+            document.getElementById('admin-panel').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
